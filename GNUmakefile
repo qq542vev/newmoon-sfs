@@ -13,17 +13,17 @@
 ##   modified - 2026-01-22
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
-##   depends - docker, find, git, glab, mkdir, mv, rm, tar, test
+##   depends - find, glab, mkdir, mv, rm, tar, test
 ##
 ## See Also:
 ##
-##   * <Project homepage at https://github.com/qq542vev/build-mozjpeg>
-##   * <Bag report at https://github.com/qq542vev/build-mozjpeg/issues>
+##   * <Project homepage at https://github.com/qq542vev/newmoon-sfs>
+##   * <Bag report at https://github.com/qq542vev/newmoon-sfs/issues>
 
 # Sp Targets
 # ==========
 
-.PHONY: all newmoon/all newmoon-sse/all newmoon-ia32/all clean rebuild update publish unpublish image help version
+.PHONY: all clean rebuild update publish unpublish help version
 
 .SILENT: help version
 
@@ -31,92 +31,98 @@
 # =====
 
 VERSION = 1.0.0
+TAG_PREF = 2026.01.26-
 
+DIR = build
+VARIANTS = newmoon newmoon-sse newmoon-ia32
 CURL = curl -fLsS
-FILES = jq -r '.files[] | select(.name | test("newmoon*\\.tar\\.xz$$")) | .name' '$(<)'
-NEWMOON_DL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
-NEWMOONSSE_DL = https://archive.org/metadata/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar
-NEWMOONIA32_DL = https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar
+FILES = DIR='$(@D)/' EXT='$(@F).sfs' jq -r '.files[] | select(.name | test("newmoon.*\\.tar\\.xz$$")) | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
 
-EXPAND = \
+NEWMOON_DL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
+NEWMOONSSE_DL = https://archive.org/metadata/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
+NEWMOONIA32_DL = https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar/
+
+EXTRACT = \
 	dir=$$(mktemp -d) && \
 	trap 'rm -rf -- "$${dir}"' EXIT && \
 	cp -R -- rootfs/* "$${dir}" && \
 	tar -C "$${dir}/usr/lib" -xJvf '$(<)'
 MKSQUASHFS_OPTS = -all-root -no-xattrs
-XZSFS = $(EXPAND) && mksquashfs "$${dir}" '$(@)'-b 1MB -comp xz -Xbcj x86 -Xdict-size 100% $(MKSQUASHFS_OPTS)
-ZSTDSFS = $(EXPAND) && mksquashfs "$${dir}" '$(@)' -b 128KB -comp zstd -Xcompression-level 19 $(MKSQUASHFS_OPTS)
+XZSFS = $(EXTRACT) && mksquashfs "$${dir}" '$(@)' -b 1MB -comp xz -Xbcj x86 -Xdict-size 100% $(MKSQUASHFS_OPTS)
+ZSTDSFS = $(EXTRACT) && mksquashfs "$${dir}" '$(@)' -b 128KB -comp zstd -Xcompression-level 19 $(MKSQUASHFS_OPTS)
 
 # Build Targets
 # =============
 
-all: newmoon/all newmoon-sse/all newmoon-ia32/all
+all: $(VARIANTS:%=$(DIR)/%/all)
 
-newmoon/all: newmoon.json
-	$(MAKE) $(FILES:%.tar.xz=newmoon/%.xz.sfs) $(FILES:%.tar.xz=newmoon/%.zstd.sfs)
+$(DIR)/%/all: $(DIR)/%/xz $(DIR)/%/zstd
+	:
+
+$(DIR)/%/xz: %.json
+	$(MAKE) $$($(FILES))
+
+$(DIR)/%/zstd: %.json
+	$(MAKE) $$($(FILES))
 
 newmoon.json:
-	$(CURL) -o '$(@)' 'https://archive.org/metadata/centos7newmoon-32.0.0.linux-i686-gtk2.tar'
+	url='$(NEWMOON_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
 
-newmoon/%.xz.sfs: newmoon/%.tar.xz
+$(DIR)/newmoon/%.xz.sfs: $(DIR)/newmoon/%.tar.xz
 	$(XZSFS)
 
-newmoon/%.zstd.sfs: newmoon/%.tar.xz
+$(DIR)/newmoon/%.zstd.sfs: $(DIR)/newmoon/%.tar.xz
 	$(ZSTDSFS)
 
-newmoon/%.tar.xz:
+$(DIR)/newmoon/%.tar.xz:
 	mkdir -p -- '$(@D)'
 	$(CURL) -o '$(@)' '$(NEWMOON_DL)$(@F)'
 
-newmoon-sse/all: newmoon-sse.json
-	$(MAKE) $(FILES:%.tar.xz=newmoon-sse/%.xz.sfs) $(FILES:%.tar.xz=newmoon-sse/%.zstd.sfs)
-
 newmoon-sse.json:
-	$(CURL) -o '$(@)' 'https://archive.org/metadata/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar'
+	url='$(NEWMOONSSE_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
 
-newmoon-sse/%.xz.sfs: newmoon-sse/%.tar.xz
+$(DIR)/newmoon-sse/%.xz.sfs: $(DIR)/newmoon-sse/%.tar.xz
 	$(XZSFS)
 
-newmoon-sse/%.zstd.sfs: newmoon-sse/%.tar.xz
+$(DIR)/newmoon-sse/%.zstd.sfs: $(DIR)/newmoon-sse/%.tar.xz
 	$(ZSTDSFS)
 
-newmoon-sse/%.tar.xz:
+$(DIR)/newmoon-sse/%.tar.xz:
 	mkdir -p -- '$(@D)'
 	$(CURL) -o '$(@)' '$(NEWMOONSSE_DL)$(@F)'
 
-newmoon-ia32/all: newmoon-ia32.json
-	$(MAKE) $(FILES:%.tar.xz=newmoon-ia32/%.xz.sfs) $(FILES:%.tar.xz=newmoon-ia32/%.zstd.sfs)
-
 newmoon-ia32.json:
-	$(CURL) -o '$(@)' 'https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar'
+	url='$(NEWMOONIA32_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
 
-newmoon-ia32/%.xz.sfs: newmoon-ia32/%.tar.xz
+$(DIR)/newmoon-ia32/%.xz.sfs: $(DIR)/newmoon-ia32/%.tar.xz
 	$(XZSFS)
 
-newmoon-ia32/%.zstd.sfs: newmoon-ia32/%.tar.xz
+$(DIR)/newmoon-ia32/%.zstd.sfs: $(DIR)/newmoon-ia32/%.tar.xz
 	$(ZSTDSFS)
 
-newmoon-ia32/%.tar.xz:
+$(DIR)/newmoon-ia32/%.tar.xz:
 	mkdir -p -- '$(@D)'
 	$(CURL) -o '$(@)' '$(NEWMOONIA32_DL)$(@F)'
 
 clean:
-	rm -rf -- newmoon newmoon-sse newmoon-ia32
+	rm -rf -- '$(DIR)'
 
 rebuild: clean
 	$(MAKE)
 
 publish:
-	for tag in newmoon newmoon-sse newmoon-ia32; do \
-		find "$(DIR)/$${tag}" ! -name '*.sfs' -type f -exec glab release create "$${tag}" --name "$${tag}" --notes "SFS Files" --no-update --use-package-registry '{}' +; \
+	for variant in $(VARIANTS); do \
+		git tag "$(TAG_PREF)$${variant}" && \
+		git push origin "$(TAG_PREF)$${variant}" && \
+		find "$(DIR)/$${variant}" -name '*.sfs' -type f -exec glab release create "$(TAG_PREF)$${variant}" --name "$${variant}" --notes 'SFS Files' --no-update --use-package-registry '{}' +; \
 	done
 
 unpublish:
-        for tag in $(TAGS); do \
-                if glab release view "$${tag}" >/dev/null 2>&1; then \
-                        glab release delete "$${tag}" -y; \
-                fi; \
-        done
+	for variant in $(VARIANTS); do \
+		if glab release view "$(TAG_PREF)$${variant}" >/dev/null 2>&1; then \
+			glab release delete "$(TAG_PREF)$${variant}" -y; \
+		fi; \
+	done
 
 # Message
 # =======
@@ -138,4 +144,3 @@ help:
 
 version:
 	echo '$(VERSION)'
-
