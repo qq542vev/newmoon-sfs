@@ -1,6 +1,8 @@
+#!/usr/bin/xdg-open
+
 [Desktop Entry]
 Type=Application
-Version=1.0
+Version=1.5
 Name=Pale Moon
 GenericName=Web Browser
 Comment=Browse the World Wide Web
@@ -9,6 +11,7 @@ TryExec=/usr/bin/palemoon
 Exec=/usr/bin/palemoon %U
 Terminal=false
 MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/atom+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;image/svg+xml;image/vnd.microsoft.icon;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/x-xpinstall;
-Categories=Network;WebBrowser
-Keywords=Internet;WWW;Browser;Web;Explorer
+Categories=Network;WebBrowser;
+Keywords=Internet;WWW;Browser;Web;Explorer;
 StartupNotify=true
+StartupWMClass=Pale moon
