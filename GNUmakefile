@@ -1,4 +1,4 @@
-#!/usr/bin/make -f
+#!/usr/bin/gmake -f
 
 ### Script: GNUmakefile
 ##
@@ -10,10 +10,10 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.0
 ##   created - 2026-01-22
-##   modified - 2026-01-22
+##   modified - 2026-01-29
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
-##   depends - find, glab, mkdir, mv, rm, tar, test
+##   depends - find, glab, mkdir, mksquashfs, mv, rm, tar
 ##
 ## See Also:
 ##
@@ -34,22 +34,23 @@ VERSION = 1.0.0
 TAG_PREF = 2026.01.26-
 
 DIR = build
-VARIANTS = newmoon newmoon-sse newmoon-ia32
+VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 CURL = curl -fLsS
 FILES = DIR='$(@D)/' EXT='$(@F).sfs' jq -r '.files[] | select(.name | test("newmoon.*\\.tar\\.xz$$")) | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
 
 NEWMOON_DL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
-NEWMOONSSE_DL = https://archive.org/metadata/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
+NEWMOONSSE_DL = https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
 NEWMOONIA32_DL = https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar/
+NEWMOON3DNOW_DL = https://archive.org/download/debian8newmoon3dnow-29.1.0.linux-i586-gtk2.tar/
 
 EXTRACT = \
-	dir=$$(mktemp -d) && \
+	dir=$$(mktemp -u) && \
 	trap 'rm -rf -- "$${dir}"' EXIT && \
-	cp -R -- rootfs/* "$${dir}" && \
+	cp -pR -- rootfs "$${dir}" && \
 	tar -C "$${dir}/usr/lib" -xJvf '$(<)'
-MKSQUASHFS_OPTS = -all-root -no-xattrs
-XZSFS = $(EXTRACT) && mksquashfs "$${dir}" '$(@)' -b 1MB -comp xz -Xbcj x86 -Xdict-size 100% $(MKSQUASHFS_OPTS)
-ZSTDSFS = $(EXTRACT) && mksquashfs "$${dir}" '$(@)' -b 128KB -comp zstd -Xcompression-level 19 $(MKSQUASHFS_OPTS)
+MKSQUASHFS_OPTS = -all-root -root-mode 0755 -no-xattrs
+XZSFS = $(EXTRACT) && mksquashfs "$${dir}" '$(@)' -b 1M -comp xz -Xbcj x86 -Xdict-size 100% $(MKSQUASHFS_OPTS)
+ZSTDSFS = $(EXTRACT) && mksquashfs "$${dir}" '$(@)' -b 128K -comp zstd -Xcompression-level 19 $(MKSQUASHFS_OPTS)
 
 # Build Targets
 # =============
@@ -65,14 +66,14 @@ $(DIR)/%/xz: %.json
 $(DIR)/%/zstd: %.json
 	$(MAKE) $$($(FILES))
 
-newmoon.json:
-	url='$(NEWMOON_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
-
-$(DIR)/newmoon/%.xz.sfs: $(DIR)/newmoon/%.tar.xz
+$(DIR)/%.xz.sfs: $(DIR)/%.tar.xz
 	$(XZSFS)
 
-$(DIR)/newmoon/%.zstd.sfs: $(DIR)/newmoon/%.tar.xz
+$(DIR)/%.zstd.sfs: $(DIR)/%.tar.xz
 	$(ZSTDSFS)
+
+newmoon.json:
+	url='$(NEWMOON_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
 
 $(DIR)/newmoon/%.tar.xz:
 	mkdir -p -- '$(@D)'
@@ -81,12 +82,6 @@ $(DIR)/newmoon/%.tar.xz:
 newmoon-sse.json:
 	url='$(NEWMOONSSE_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
 
-$(DIR)/newmoon-sse/%.xz.sfs: $(DIR)/newmoon-sse/%.tar.xz
-	$(XZSFS)
-
-$(DIR)/newmoon-sse/%.zstd.sfs: $(DIR)/newmoon-sse/%.tar.xz
-	$(ZSTDSFS)
-
 $(DIR)/newmoon-sse/%.tar.xz:
 	mkdir -p -- '$(@D)'
 	$(CURL) -o '$(@)' '$(NEWMOONSSE_DL)$(@F)'
@@ -94,18 +89,19 @@ $(DIR)/newmoon-sse/%.tar.xz:
 newmoon-ia32.json:
 	url='$(NEWMOONIA32_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
 
-$(DIR)/newmoon-ia32/%.xz.sfs: $(DIR)/newmoon-ia32/%.tar.xz
-	$(XZSFS)
-
-$(DIR)/newmoon-ia32/%.zstd.sfs: $(DIR)/newmoon-ia32/%.tar.xz
-	$(ZSTDSFS)
-
 $(DIR)/newmoon-ia32/%.tar.xz:
 	mkdir -p -- '$(@D)'
 	$(CURL) -o '$(@)' '$(NEWMOONIA32_DL)$(@F)'
 
+newmoon-3dnow.json:
+	url='$(NEWMOON3DNOW_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
+
+$(DIR)/newmoon-3dnow/%.tar.xz:
+	mkdir -p -- '$(@D)'
+	$(CURL) -o '$(@)' '$(NEWMOON3DNOW_DL)$(@F)'
+
 clean:
-	rm -rf -- '$(DIR)'
+	rm -rf -- $(VARIANTS:%='%.json') '$(DIR)'
 
 rebuild: clean
 	$(MAKE)
