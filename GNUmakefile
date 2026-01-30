@@ -10,7 +10,7 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.0
 ##   created - 2026-01-22
-##   modified - 2026-01-29
+##   modified - 2026-01-30
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   depends - find, glab, mkdir, mksquashfs, mv, rm, tar
@@ -30,8 +30,10 @@
 # Macro
 # =====
 
+.SHELLFLAGS = -efuo pipefail -c
+
 VERSION = 1.0.0
-TAG_PREF = 2026.01.26-
+DATE = 2026-01-26
 
 DIR = build
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
@@ -108,17 +110,11 @@ rebuild: clean
 
 publish:
 	for variant in $(VARIANTS); do \
-		git tag "$(TAG_PREF)$${variant}" && \
-		git push origin "$(TAG_PREF)$${variant}" && \
-		find "$(DIR)/$${variant}" -name '*.sfs' -type f -exec glab release create "$(TAG_PREF)$${variant}" --name "$${variant}" --notes 'SFS Files' --no-update --use-package-registry '{}' +; \
+		find "$(DIR)/$${variant}" -name '*.sfs' -type f -print -exec sh -c 'glab api -X PUT "projects/:id/packages/generic/$${1}/$(DATE)/$${2##*/}" --input "$${2}"' sh "$${variant}" '{}' ';'; \
 	done
 
 unpublish:
-	for variant in $(VARIANTS); do \
-		if glab release view "$(TAG_PREF)$${variant}" >/dev/null 2>&1; then \
-			glab release delete "$(TAG_PREF)$${variant}" -y; \
-		fi; \
-	done
+	for url in $$(glab api 'projects/:id/packages' | jq -r --arg names '$(VARIANTS)' --arg ver '$(DATE)' '.[] | select(.name as $$n | ($$names | split(" ") | index($$n)) and .version == $$ver) | ._links.delete_api_path'); do glab api --method DELETE "$${url}"; done
 
 # Message
 # =======
