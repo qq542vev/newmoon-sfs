@@ -34,7 +34,7 @@ New Moonについてのより詳しい情報は[AntiX Forumへの投稿](https:/
 
 [Package registry](https://gitlab.com/qq542vev/newmoon-sfs/-/packages/)から必要なSFSファイルをダウンロードしてください。SFSファイルにはxz圧縮とzstd圧縮のものが存在します。
 
-| 比較                 | xz   | zstd |
+| 比較項目             | xz   | zstd |
 | -------------------- | ---- | ---- |
 | 圧縮率               | 最良 | 良   |
 | 展開速度             | 低速 | 中速 |
@@ -42,4 +42,4 @@ New Moonについてのより詳しい情報は[AntiX Forumへの投稿](https:/
 
 ## ライセンス
 
-New Moon SFSに含まれるファイルのライセンスは<LICENSE.txt>の記載に従います。New Moon自体のライセンスはNew Moonで<about:license>を開くと確認できます。
+New Moon SFSに含まれるファイルのライセンスは[LICENSE](LICENSE.txt)の記載に従います。New Moon自体のライセンスはNew Moonで<about:license>を開くと確認可能です。
