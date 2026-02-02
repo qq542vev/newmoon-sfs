@@ -8,9 +8,9 @@
 ##
 ##   id - 0f626fa2-2e49-42b0-8351-f44bd6ab4c34
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.0
+##   version - 1.0.1
 ##   created - 2026-01-22
-##   modified - 2026-01-30
+##   modified - 2026-02-02
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   depends - find, glab, mkdir, mksquashfs, mv, rm, tar
@@ -32,8 +32,8 @@
 
 .SHELLFLAGS = -efuo pipefail -c
 
-VERSION = 1.0.0
-DATE = 2026-01-26
+VERSION = 1.0.1
+DATE = 2026-02-02
 
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 DIR = build

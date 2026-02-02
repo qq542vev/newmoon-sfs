@@ -44,7 +44,7 @@ COPY GNUmakefile .
 COPY rootfs rootfs
 
 ARG MAKE_OPTS=
-RUN make SHELL=/bin/bash ${MAKE_OPTS}
+RUN until make SHELL=/bin/bash ${MAKE_OPTS}; do :; done
 
 FROM scratch
 
