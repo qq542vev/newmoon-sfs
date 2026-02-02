@@ -21,7 +21,7 @@ See Also:
 
 # New Moon SFS
 
-New Moon SFSはFenyőさんが作成したのNew Moon([Pale Noon](https://www.palemoon.org/)の変異版)をPuppy Linux用にSFS(SquashFS)ファイルとして再配布するプロジェクトです。2026年02月現在次のNew Moonを再配布しています。
+New Moon SFSはFenyőさんが作成したのNew Moon([Pale Noon](https://www.palemoon.org/)の変異版)を[Puppy Linux](https://puppylinux-woof-ce.github.io/)用にSFS(SquashFS)ファイルとして再配布するプロジェクトです。2026年02月現在次のNew Moonを再配布しています。
 
  * [New Moon](https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/)(x86, SSE2対応版)
  * [New Moon SSE](https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/)(x86, SSE対応版)
@@ -35,7 +35,7 @@ New Moonについてのより詳しい情報は[AntiX Forumへの投稿](https:/
 [Package registry](https://gitlab.com/qq542vev/newmoon-sfs/-/packages/)から必要なSFSファイルをダウンロードしてください。SFSファイルにはxz圧縮とzstd圧縮のものが存在します。
 
 | 比較                 | xz   | zstd |
-| ==================== | ==== | ==== |
+| -------------------- | ---- | ---- |
 | 圧縮率               | 最良 | 良   |
 | 展開速度             | 低速 | 中速 |
 | 展開時のメモリ使用量 | 大   | 小   |
