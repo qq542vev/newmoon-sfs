@@ -39,3 +39,7 @@ New Moonについてのより詳しい情報は[AntiX Forumへの投稿](https:/
 | 圧縮率               | 最良 | 良   |
 | 展開速度             | 低速 | 中速 |
 | 展開時のメモリ使用量 | 大   | 小   |
+
+## ライセンス
+
+New Moon SFSに含まれるファイルのライセンスは<LICENSE.txt>の記載に従います。New Moon自体のライセンスはNew Moonで<about:license>を開くと確認できます。
