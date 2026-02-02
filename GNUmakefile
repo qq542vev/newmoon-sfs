@@ -35,24 +35,30 @@
 VERSION = 1.0.0
 DATE = 2026-01-26
 
-DIR = build
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
-CURL = curl -fLsS
+DIR = build
+CURL = curl -fLsSo
+MKDIR = mkdir -p --
+
 FILES = DIR='$(@D)/' EXT='$(@F).sfs' jq -r '.files[] | select(.name | test("newmoon.*\\.tar\\.xz$$")) | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
 
-NEWMOON_DL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
-NEWMOONSSE_DL = https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
-NEWMOONIA32_DL = https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar/
-NEWMOON3DNOW_DL = https://archive.org/download/debian8newmoon3dnow-29.1.0.linux-i586-gtk2.tar/
+NEWMOON_URL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
+NEWMOONSSE_URL = https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
+NEWMOONIA32_URL = https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar/
+NEWMOON3DNOW_URL = https://archive.org/download/debian8newmoon3dnow-29.1.0.linux-i586-gtk2.tar/
 
 EXTRACT = \
 	dir=$$(mktemp -u) && \
 	trap 'rm -rf -- "$${dir}"' EXIT && \
 	cp -pR -- rootfs "$${dir}" && \
 	tar -C "$${dir}/usr/lib" -xJvf '$(<)'
-MKSQUASHFS_OPTS = -all-root -root-mode 0755 -no-xattrs
-XZSFS = $(EXTRACT) && mksquashfs "$${dir}" '$(@)' -b 1M -comp xz -Xbcj x86 -Xdict-size 100% $(MKSQUASHFS_OPTS)
-ZSTDSFS = $(EXTRACT) && mksquashfs "$${dir}" '$(@)' -b 128K -comp zstd -Xcompression-level 19 $(MKSQUASHFS_OPTS)
+
+SFS_OPTS = -all-root -root-mode 0755 -no-xattrs
+XZ_OPTS = $(SFS_OPTS) -b 1M -Xbcj x86 -Xdict-size 100%
+ZSTD_OPTS = $(SFS_OPTS) -b 128K -Xcompression-level 19
+MKSFS = mksquashfs
+MKXZSFS = $(EXTRACT) && $(MKSFS) "$${dir}" '$(@)' -comp xz $(XZ_OPTS)
+MKZSTDSFS = $(EXTRACT) && $(MKSFS) "$${dir}" '$(@)' -comp zstd $(ZSTD_OPTS)
 
 # Build Targets
 # =============
@@ -69,38 +75,38 @@ $(DIR)/%/zstd: %.json
 	$(MAKE) $$($(FILES))
 
 $(DIR)/%.xz.sfs: $(DIR)/%.tar.xz
-	$(XZSFS)
+	$(MKXZSFS)
 
 $(DIR)/%.zstd.sfs: $(DIR)/%.tar.xz
-	$(ZSTDSFS)
+	$(MKZSTDSFS)
 
 newmoon.json:
-	url='$(NEWMOON_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
+	url='$(NEWMOON_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
 
 $(DIR)/newmoon/%.tar.xz:
-	mkdir -p -- '$(@D)'
-	$(CURL) -o '$(@)' '$(NEWMOON_DL)$(@F)'
+	$(MKDIR) '$(@D)'
+	$(CURL) '$(@)' '$(NEWMOON_URL)$(@F)'
 
 newmoon-sse.json:
-	url='$(NEWMOONSSE_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
+	url='$(NEWMOONSSE_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
 
 $(DIR)/newmoon-sse/%.tar.xz:
-	mkdir -p -- '$(@D)'
-	$(CURL) -o '$(@)' '$(NEWMOONSSE_DL)$(@F)'
+	$(MKDIR) '$(@D)'
+	$(CURL) '$(@)' '$(NEWMOONSSE_URL)$(@F)'
 
 newmoon-ia32.json:
-	url='$(NEWMOONIA32_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
+	url='$(NEWMOONIA32_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
 
 $(DIR)/newmoon-ia32/%.tar.xz:
-	mkdir -p -- '$(@D)'
-	$(CURL) -o '$(@)' '$(NEWMOONIA32_DL)$(@F)'
+	$(MKDIR) '$(@D)'
+	$(CURL) '$(@)' '$(NEWMOONIA32_URL)$(@F)'
 
 newmoon-3dnow.json:
-	url='$(NEWMOON3DNOW_DL)' && $(CURL) -o '$(@)' "$${url%%download*}metadata$${url#*download}"
+	url='$(NEWMOON3DNOW_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
 
 $(DIR)/newmoon-3dnow/%.tar.xz:
-	mkdir -p -- '$(@D)'
-	$(CURL) -o '$(@)' '$(NEWMOON3DNOW_DL)$(@F)'
+	$(MKDIR) '$(@D)'
+	$(CURL) '$(@)' '$(NEWMOON3DNOW_URL)$(@F)'
 
 clean:
 	rm -rf -- $(VARIANTS:%='%.json') '$(DIR)'
@@ -125,12 +131,17 @@ help:
 	echo 'USAGE:'
 	echo '  make [OPTION...] [MACRO=VALUE...] [TARGET...]'
 	echo
+	echo 'MACRO:'
+	echo '  SFS_OPTS  mksquashfsの共通オプション。'
+	echo '  XZ_OPTS   mksquashfs -comp xz時のオプション。'
+	echo '  ZSTD_OPTS mksquashfs -comp zstd時のオプション。'
+	echo
 	echo 'TARGET:'
 	echo '  all       全てのファイルを作成する。'
 	echo '  clean     作成したファイルを削除する。'
 	echo '  rebuild   cleanの実行後にallを実行する。'
-	echo '  publish   リリースページを作成する。'
-	echo '  unpublish リリースページを削除する。'
+	echo '  publish   リモートにSFSを公開する。'
+	echo '  unpublish リモートのSFSを削除する。'
 	echo '  help      このヘルプを表示して終了する。'
 	echo '  version   バージョン情報を表示して終了する。'
 
