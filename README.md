@@ -6,9 +6,9 @@ Metadata:
 
 	id - 359da752-1be7-4070-9c83-e30a5c3e0c3c
 	author - <qq542vev at https://purl.org/meta/me/>
-	version - 0.1.0
+	version - 0.1.1
 	created - 2026-02-02
-	modified - 2026-02-02
+	modified - 2026-02-04
 	copyright - Copyright (C) 2026-2026 qq542vev. Some rights reserved.
 	license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 	conforms-to - <https://spec.commonmark.org/current/>
@@ -32,7 +32,7 @@ New Moonについてのより詳しい情報は[AntiX Forumへの投稿](https:/
 
 ## ダウンロード
 
-[Package registry](https://gitlab.com/qq542vev/newmoon-sfs/-/packages/)から必要なSFSファイルをダウンロードしてください。SFSファイルにはxz圧縮とzstd圧縮のものが存在します。
+[ファイルの一覧](https://archive.org/download/newmoon-sfs)から必要なSFSファイルをダウンロードしてください。SFSファイルにはxz圧縮とzstd圧縮のものが存在します。
 
 | 比較項目             | xz   | zstd |
 | -------------------- | ---- | ---- |

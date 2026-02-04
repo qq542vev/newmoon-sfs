@@ -8,12 +8,12 @@
 ##
 ##   id - 0f626fa2-2e49-42b0-8351-f44bd6ab4c34
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.1.0
+##   version - 1.0.2
 ##   created - 2026-01-22
-##   modified - 2026-02-02
+##   modified - 2026-02-04
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
-##   depends - find, glab, mkdir, mksquashfs, mv, rm, tar
+##   depends - curl, find, mkdir, mksquashfs, rclone, rm, tar
 ##
 ## See Also:
 ##
@@ -32,13 +32,13 @@
 
 .SHELLFLAGS = -efuo pipefail -c
 
-VERSION = 1.0.1
-DATE = 2026-02-02
+VERSION = 1.0.2
 
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 DIR = build
 CURL = curl -fLsSo
 MKDIR = mkdir -p --
+RCLONE = rclone
 
 FILES = DIR='$(@D)/' EXT='$(@F).sfs' jq -r '.files[] | select(.name | test("newmoon.*\\.tar\\.xz$$")) | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
 
@@ -116,11 +116,11 @@ rebuild: clean
 
 publish:
 	for variant in $(VARIANTS); do \
-		find "$(DIR)/$${variant}" -name '*.sfs' -type f -print -exec sh -c 'glab api -X PUT "projects/:id/packages/generic/$${1}/$(DATE)/$${2##*/}" --input "$${2}"' sh "$${variant}" '{}' ';'; \
+		find "$(DIR)/$${variant}" -name '*.sfs' -type f -print -exec $(RCLONE) copy '{}' 'newmoon-sfs:' ';'; \
 	done
 
 unpublish:
-	for url in $$(glab api 'projects/:id/packages' | jq -r --arg names '$(VARIANTS)' --arg ver '$(DATE)' '.[] | select(.name as $$n | ($$names | split(" ") | index($$n)) and .version == $$ver) | ._links.delete_api_path'); do glab api --method DELETE "$${url}"; done
+	$(RCLONE) purge newmoon-sfs:
 
 # Docs
 # ====
