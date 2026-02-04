@@ -23,10 +23,10 @@ See Also:
 
 New Moon SFSはFenyőさんが作成したのNew Moon([Pale Noon](https://www.palemoon.org/)の変異版)を[Puppy Linux](https://puppylinux-woof-ce.github.io/)用にSFS(SquashFS)ファイルとして再配布するプロジェクトです。2026年02月現在次のNew Moonを再配布しています。
 
- * [New Moon](https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/)(x86, SSE2対応版)
- * [New Moon SSE](https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/)(x86, SSE対応版)
- * [New Moon IA32](https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar/)(x86, CMO対応版)
- * [New Moon 3DNow](https://archive.org/download/debian8newmoon3dnow-29.1.0.linux-i586-gtk2.tar/)(x86, 3DNow対応版)
+ * [New Moon](https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar)(x86, SSE2対応版)
+ * [New Moon SSE](https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar)(x86, SSE対応版)
+ * [New Moon IA32](https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar)(x86, CMO対応版)
+ * [New Moon 3DNow](https://archive.org/download/debian8newmoon3dnow-29.1.0.linux-i586-gtk2.tar)(x86, 3DNow対応版)
 
 New Moonについてのより詳しい情報は[AntiX Forumへの投稿](https://www.antixforum.com/forums/topic/browsers-for-old-cpus/page/10/#post-104401)を参照してください。
 
