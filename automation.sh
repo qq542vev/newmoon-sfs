@@ -4,6 +4,9 @@ set -eu
 
 git config user.name 'qq542vev'
 git config user.email 'qq542vev@yahoo.co.jp'
+
+git fetch --depth=1 origin '+refs/heads/*:refs/remotes/origin/*'
+
 git branch -a
 git checkout -B automation origin/automation
 git checkout origin/master -- makefile
