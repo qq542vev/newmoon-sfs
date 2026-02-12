@@ -2,17 +2,16 @@
 
 set -eu
 
-git clone -b automation git@github.com:qq542vev/newmoon-sfs.git work
-cd -- work
+git config user.name 'qq542vev'
+git config user.email 'qq542vev@yahoo.co.jp'
 
-mkdir -p ~/.config/rclone
-printf '%s\n' "${RCLONE_CONF}" > ~/.config/rclone/rclone.conf
+git checkout -B automation
 
-make
-make publish
+make all publish
 
-find build -type f ! -empty -exec sh -c 'for f in "${@}"; do : > "${f}"; done' sh '{}' +
+find build -type f ! -empty -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
 
-git status --porcelain | grep . || exit
-git commit -am 'automation: mark processed files'
-git push
+git status --porcelain | grep . || exit 0
+git add -A
+git commit -m 'automation: mark processed files'
+git push "https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/q542vev/newmoon-sfs.git" 'HEAD:automation'
