@@ -4,7 +4,7 @@ set -eu
 
 git config user.name 'qq542vev'
 git config user.email 'qq542vev@yahoo.co.jp'
-
+git branch -a
 git checkout -B automation origin/automation
 git checkout origin/master -- makefile
 
