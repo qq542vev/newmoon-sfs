@@ -8,7 +8,7 @@ git config user.email 'qq542vev@yahoo.co.jp'
 git checkout -B automation origin/automation
 git checkout origin/master -- makefile
 
-make all publish
+make build/3dnow/all publish
 
 find build -type f ! -empty -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
 
