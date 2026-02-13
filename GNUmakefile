@@ -8,7 +8,7 @@
 ##
 ##   id - 0f626fa2-2e49-42b0-8351-f44bd6ab4c34
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.3
+##   version - 1.0.4
 ##   created - 2026-01-22
 ##   modified - 2026-02-13
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
@@ -32,7 +32,7 @@
 
 .SHELLFLAGS = -efuo pipefail -c
 
-VERSION = 1.0.3
+VERSION = 1.0.4
 
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 DIR = build
@@ -117,7 +117,7 @@ rebuild: clean
 publish:
 	for variant in $(VARIANTS); do \
 		if [ -d "$(DIR)/$${variant}" ]; then \
-			find "$(DIR)/$${variant}" -name '*.sfs' -type f ! -size 0 -print -exec $(RCLONE) copy '{}' 'newmoon-sfs:' ';'; \
+				find "$(DIR)/$${variant}" -name '*.sfs' -type f ! -size 0 -print -exec sh -euc 'for f in "$${@}"; do $(RCLONE) copy "$${f}" "newmoon-sfs:"; done' sh '{}' '+'; \
 		fi; \
 	done
 
