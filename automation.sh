@@ -13,7 +13,7 @@ git checkout origin/master -- GNUmakefile rootfs
 
 make build/newmoon-3dnow/debain8gcc7+newmoon3dnow-32.3.1.linux-i586-gtk2.xz.sfs publish
 
-find build -type f ! -empty -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
+find build -type f ! -size 0 -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
 
 git status --porcelain | grep . || exit 0
 git add build
