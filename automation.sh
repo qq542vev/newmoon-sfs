@@ -2,6 +2,7 @@
 
 set -eu
 
+readonly DIR='build'
 git config user.name 'qq542vev'
 git config user.email 'qq542vev@yahoo.co.jp'
 
@@ -13,10 +14,12 @@ git checkout origin/master -- GNUmakefile rootfs
 
 make SHELL=bash build/newmoon-3dnow/debain8gcc7+newmoon3dnow-32.3.1.linux-i586-gtk2.xz.sfs publish
 
-find build -type f ! -size 0 -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
+find "${DIR}" -type f ! -size 0 -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
 
-git status --porcelain | grep . || exit 0
-git add build
-git commit -m 'automation: mark processed files' build
+case "$(git status --porcelain "${DIR}")" in
+	'') exit 0;;
+esac
 
+git add "${DIR}"
+git commit -m 'automation: mark processed files' "${DIR}"
 git push "https://token:${GITLAB_TOKEN}@gitlab.com/q542vev/newmoon-sfs.git" 'HEAD:automation'
