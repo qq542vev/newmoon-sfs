@@ -17,5 +17,6 @@ find build -type f ! -size 0 -exec sh -euc 'for f in "${@}"; do : >"${f}"; done'
 
 git status --porcelain | grep . || exit 0
 git add build
-git commit -m 'automation: mark processed files'
+git commit -m 'automation: mark processed files' build
+
 git push "https://token:${GITLAB_TOKEN}@gitlab.com/q542vev/newmoon-sfs.git" 'HEAD:automation'
