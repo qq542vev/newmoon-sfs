@@ -25,4 +25,4 @@ esac
 
 git add "${DIR}"
 git commit -m 'automation: mark processed files' "${DIR}"
-git push "https://token:${GITLAB_TOKEN}@gitlab.com/q542vev/newmoon-sfs.git" 'HEAD:automation'
+git push "https://token:${GITLAB_TOKEN}@gitlab.com/qq542vev/newmoon-sfs.git" 'HEAD:automation'
