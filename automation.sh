@@ -11,7 +11,7 @@ git branch -a
 git checkout -B automation origin/automation
 git checkout origin/master -- GNUmakefile
 
-make build/3dnow/all publish
+make build/newmoon-3dnow/all publish
 
 find build -type f ! -empty -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
 
