@@ -11,7 +11,7 @@ git branch -a
 git checkout -B automation origin/automation
 git checkout origin/master -- GNUmakefile rootfs
 
-make build/newmoon-3dnow/debain8gcc7+newmoon3dnow-32.3.1.linux-i586-gtk2.xz.sfs publish
+make SHELL=bash build/newmoon-3dnow/debain8gcc7+newmoon3dnow-32.3.1.linux-i586-gtk2.xz.sfs publish
 
 find build -type f ! -size 0 -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
 

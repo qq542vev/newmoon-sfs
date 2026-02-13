@@ -9,6 +9,6 @@ automation:
   image: debian:stable-slim
   before_script:
     - apt-get update -qq
-    - apt-get install -y --no-install-recommends git make ca-certificates curl findutils jq squashfs-tools xz-utils
+    - apt-get install -y --no-install-recommends git make ca-certificates curl findutils jq squashfs-tools xz-utils rclone
   script:
     - ./automation.sh
