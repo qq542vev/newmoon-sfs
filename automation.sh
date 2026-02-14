@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eu
+set -efuo pipefail
 
 readonly DIR='build'
 
@@ -10,11 +10,10 @@ git config user.name 'qq542vev'
 git config user.email 'qq542vev@yahoo.co.jp'
 
 git fetch --depth=1 origin '+refs/heads/*:refs/remotes/origin/*'
-
 git checkout -B automation origin/automation
 git checkout origin/master -- GNUmakefile rootfs
 
-make SHELL=bash all publish
+make SHELL=/bin/bash all publish
 
 find "${DIR}" -type f ! -size 0 -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
 
@@ -24,4 +23,4 @@ esac
 
 git add "${DIR}"
 git commit -m 'automation: mark processed files' "${DIR}"
-git push 'git@gitlab.com:qq542vev/newmoon-sfs.git' 'HEAD:automation'
+git push origin 'HEAD:automation'
