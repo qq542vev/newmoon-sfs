@@ -42,4 +42,4 @@ esac
 
 git add -- "${DIR}"
 git commit -m 'automation: mark processed files' -- "${DIR}"
-git push origin HEAD
+git push "${SSH_URL}" HEAD
