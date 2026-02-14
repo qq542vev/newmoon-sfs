@@ -28,6 +28,6 @@ automation:
   image: ubuntu:26.04
   before_script:
     - apt-get update -qq
-    - apt-get install -y --no-install-recommends ca-certificates curl findutils git jq make openssh-clientrclone squashfs-tools xz-utils
+    - apt-get install -y --no-install-recommends ca-certificates curl findutils git jq make openssh-client rclone squashfs-tools xz-utils
   script:
     - ./automation.sh
