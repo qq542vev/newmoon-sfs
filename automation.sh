@@ -4,6 +4,7 @@ set -eu
 
 readonly DIR='build'
 
+chmod 400 "${SSH_PRIVATE_KEY}"
 git config core.sshCommand "ssh -i ${SSH_PRIVATE_KEY} -o IdentitiesOnly=yes -o UserKnownHostsFile=known_hosts -o StrictHostKeyChecking=yes"
 git config user.name 'qq542vev'
 git config user.email 'qq542vev@yahoo.co.jp'
