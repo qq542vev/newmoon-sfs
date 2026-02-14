@@ -32,7 +32,7 @@ git fetch --depth=1 origin '+refs/heads/*:refs/remotes/origin/*'
 git checkout -B automation origin/automation
 git checkout origin/master -- GNUmakefile rootfs
 
-make SHELL=/bin/bash all publish
+make all publish
 
 find -- "${DIR}" -type f ! -size 0 -exec sh -euc 'for f in "${@}"; do : >"${f}"; done' sh '{}' +
 
