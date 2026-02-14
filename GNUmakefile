@@ -8,9 +8,9 @@
 ##
 ##   id - 0f626fa2-2e49-42b0-8351-f44bd6ab4c34
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.4
+##   version - 1.0.5
 ##   created - 2026-01-22
-##   modified - 2026-02-13
+##   modified - 2026-02-15
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   depends - curl, find, mkdir, mksquashfs, rclone, rm, tar
@@ -32,7 +32,7 @@
 
 .SHELLFLAGS = -efuo pipefail -c
 
-VERSION = 1.0.4
+VERSION = 1.0.5
 
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 DIR = build
@@ -40,7 +40,7 @@ CURL = curl -fLsSo
 MKDIR = mkdir -p --
 RCLONE = rclone
 
-FILES = DIR='$(@D)/' EXT='$(@F).sfs' jq -r '.files[] | select(.name | test("newmoon.*\\.tar\\.xz$$")) | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
+FILES = DIR='$(@D)/' EXT='$(@F).sfs' jq -r '.files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
 
 NEWMOON_URL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
 NEWMOONSSE_URL = https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
