@@ -1,3 +1,22 @@
+### Script: .gitlab-ci.yml
+##
+## GitLab CIの設定。
+##
+## Metadata:
+##
+##   id - bf5a1eb1-afd6-4eef-ac6e-ec1bee8cac95
+##   author - <qq542vev at https://purl.org/meta/me/>
+##   version - 1.0.0
+##   created - 2026-02-14
+##   modified - 2026-02-14
+##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
+##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
+##
+## See Also:
+##
+##   * <Project homepage at https://github.com/qq542vev/newmoon-sfs>
+##   * <Bag report at https://github.com/qq542vev/newmoon-sfs/issues>
+
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "schedule"' # 時限実行を許可
