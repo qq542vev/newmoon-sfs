@@ -20,9 +20,9 @@ variables:
   SSH_URL: "ssh://git@${CI_SERVER_SHELL_SSH_HOST}:${CI_SERVER_SHELL_SSH_PORT}/${CI_PROJECT_PATH}.git"
 workflow:
   rules:
-    - if: '${CI_PIPELINE_SOURCE} == "schedule"' # 時限実行を許可
+    - if: '$CI_PIPELINE_SOURCE == "schedule"' # 時限実行を許可
       when: always
-    - if: '${CI_PIPELINE_SOURCE} == "web"' # Webからの実行を許可
+    - if: '$CI_PIPELINE_SOURCE == "web"' # Webからの実行を許可
       when: always
     - when: never # その他はパイプラインを作らない
 automation:
