@@ -8,7 +8,7 @@ Metadata:
 	author - <qq542vev at https://purl.org/meta/me/>
 	version - 0.1.1
 	created - 2026-02-02
-	modified - 2026-02-04
+	modified - 2026-04-10
 	copyright - Copyright (C) 2026-2026 qq542vev. Some rights reserved.
 	license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 	conforms-to - <https://spec.commonmark.org/current/>
@@ -21,7 +21,7 @@ See Also:
 
 # New Moon SFS
 
-New Moon SFSはFenyőさんが作成したのNew Moon([Pale Noon](https://www.palemoon.org/)の変異版)を[Puppy Linux](https://puppylinux-woof-ce.github.io/)用にSFS(SquashFS)ファイルとして再配布するプロジェクトです。2026年02月現在次のNew Moonを再配布しています。
+New Moon SFSはFenyőさんが作成したNew Moon([Pale Moon](https://www.palemoon.org/)の変異版)を[Puppy Linux](https://puppylinux-woof-ce.github.io/)用にSFS(SquashFS)ファイルとして再配布するプロジェクトです。2026年02月現在次のNew Moonを再配布しています。
 
  * [New Moon](https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar)(x86, SSE2対応版)
  * [New Moon SSE](https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar)(x86, SSE対応版)
@@ -32,7 +32,7 @@ New Moonについてのより詳しい情報は[AntiX Forumへの投稿](https:/
 
 ## ダウンロード
 
-[ファイルの一覧](https://archive.org/download/newmoon-sfs)から必要なSFSファイルをダウンロードしてください。SFSファイルにはxz圧縮とzstd圧縮のものが存在します。
+[ファイルの一覧](https://archive.org/download/newmoon-sfs)から必要なSFSファイルをダウンロードしてください。SFSファイルにはxz圧縮とzstd圧縮のものが存在します。迷った場合は、ファイルサイズを抑えたいなら **xz** 版を、展開速度を重視するなら **zstd** 版を選択してください。
 
 | 比較項目             | xz   | zstd |
 |----------------------|------|------|
