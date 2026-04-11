@@ -18,7 +18,7 @@
 ## See Also:
 ##
 ##   * <Project homepage at https://github.com/qq542vev/newmoon-sfs>
-##   * <Bag report at https://github.com/qq542vev/newmoon-sfs/issues>
+##   * <Bug report at https://github.com/qq542vev/newmoon-sfs/issues>
 
 # Sp Targets
 # ==========
@@ -36,7 +36,7 @@ VERSION = 1.0.5
 
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 DIR = build
-CURL = curl -fLsSo
+CURL = curl -fLsS --retry 5 --retry-delay 2 --retry-connrefused -o
 MKDIR = mkdir -p --
 RCLONE = rclone
 

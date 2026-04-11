@@ -26,9 +26,10 @@
 ## See Also:
 ##
 ##   * <Project homepage at https://github.com/qq542vev/newmoon-sfs>
-##   * <Bag report at https://github.com/qq542vev/newmoon-sfs/issues>
+##   * <Bug report at https://github.com/qq542vev/newmoon-sfs/issues>
 
-FROM ubuntu:26.04 AS build
+ARG IMAGE=ubuntu:26.04
+FROM ${IMAGE} AS build
 
 ENV LANG=C.UTF-8 LC_ALL=C.UTF-8 TZ=UTC0 DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/sh", "-euo", "pipefail", "-c"]
@@ -44,7 +45,7 @@ COPY GNUmakefile .
 COPY rootfs rootfs
 
 ARG MAKE_OPTS=
-RUN until make ${MAKE_OPTS}; do :; done
+RUN make ${MAKE_OPTS}
 
 FROM scratch
 
