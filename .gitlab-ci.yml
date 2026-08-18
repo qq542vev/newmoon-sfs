@@ -6,9 +6,9 @@
 ##
 ##   id - bf5a1eb1-afd6-4eef-ac6e-ec1bee8cac95
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.0
+##   version - 1.0.1
 ##   created - 2026-02-14
-##   modified - 2026-02-14
+##   modified - 2026-08-18
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##
@@ -24,9 +24,15 @@ workflow:
       when: always
     - if: '$CI_PIPELINE_SOURCE == "web"' # Webからの実行を許可
       when: always
+    - if: '$CI_PIPELINE_SOURCE == "api"' # APIからの実行を許可
+      when: always
+    - if: '$CI_PIPELINE_SOURCE == "trigger"' # Pipeline Triggerトークン経由の実行を許可
+      when: always
     - when: never # その他はパイプラインを作らない
 automation:
   image: ubuntu:26.04
+  variables:
+    DEBIAN_FRONTEND: noninteractive
   before_script:
     - apt-get update -qq
     - apt-get install -y --no-install-recommends ca-certificates curl findutils git jq make openssh-client rclone squashfs-tools xz-utils
