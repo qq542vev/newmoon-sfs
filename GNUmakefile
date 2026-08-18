@@ -10,10 +10,10 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.5
 ##   created - 2026-01-22
-##   modified - 2026-02-15
+##   modified - 2026-08-18
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
-##   depends - curl, find, mkdir, mksquashfs, rclone, rm, tar
+##   depends - cp, curl, find, jq, mkdir, mksquashfs, rclone, rm, tar
 ##
 ## See Also:
 ##
@@ -27,12 +27,14 @@
 
 .SILENT: help version
 
+.DELETE_ON_ERROR:
+
 # Macro
 # =====
 
 .SHELLFLAGS = -efuo pipefail -c
 
-VERSION = 1.0.5
+VERSION = 1.0.6
 
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 DIR = build
@@ -114,10 +116,14 @@ clean:
 rebuild: clean
 	$(MAKE)
 
+update:
+	rm -f -- $(VARIANTS:%='%.json')
+	$(MAKE) $(VARIANTS:%='%.json')
+
 publish:
 	for variant in $(VARIANTS); do \
 		if [ -d "$(DIR)/$${variant}" ]; then \
-				find "$(DIR)/$${variant}" -name '*.sfs' -type f ! -size 0 -print -exec sh -euc 'for f in "$${@}"; do $(RCLONE) copy "$${f}" "newmoon-sfs:"; done' sh '{}' '+'; \
+				find "$(DIR)/$${variant}" -name '*.sfs' -type f ! -size 0 -print -exec $(SHELL) $(.SHELLFLAGS) 'for f in "$${@}"; do $(RCLONE) copy "$${f}" "newmoon-sfs:"; done' sh '{}' '+'; \
 		fi; \
 	done
 
@@ -148,6 +154,7 @@ help:
 	echo '  all       全てのファイルを作成する。'
 	echo '  clean     作成したファイルを削除する。'
 	echo '  rebuild   cleanの実行後にallを実行する。'
+	echo '  update    JSONファイルのみを更新する。'
 	echo '  publish   リモートにSFSを公開する。'
 	echo '  unpublish リモートのSFSを削除する。'
 	echo '  help      このヘルプを表示して終了する。'
