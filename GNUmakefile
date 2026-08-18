@@ -8,7 +8,7 @@
 ##
 ##   id - 0f626fa2-2e49-42b0-8351-f44bd6ab4c34
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.5
+##   version - 1.0.6
 ##   created - 2026-01-22
 ##   modified - 2026-08-18
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
@@ -41,8 +41,9 @@ DIR = build
 CURL = curl -fLsS --retry 5 --retry-delay 2 --retry-connrefused -o
 MKDIR = mkdir -p --
 RCLONE = rclone
+ITEMS = 2147483647
 
-FILES = DIR='$(@D)/' EXT='$(@F).sfs' jq -r '.files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
+FILES = DIR='$(@D)/' EXT='$(@F).sfs' ITEMS='$(ITEMS)' jq -r '[ .files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) ] | sort_by((.mtime // "0") | tonumber) | reverse | .[0:(env.ITEMS | tonumber)] | .[] | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
 
 NEWMOON_URL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
 NEWMOONSSE_URL = https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
@@ -71,10 +72,10 @@ $(DIR)/%/all: $(DIR)/%/xz $(DIR)/%/zstd
 	:
 
 $(DIR)/%/xz: %.json
-	$(MAKE) $$($(FILES))
+	f=$$($(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
 
 $(DIR)/%/zstd: %.json
-	$(MAKE) $$($(FILES))
+	f=$$($(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
 
 $(DIR)/%.xz.sfs: $(DIR)/%.tar.xz
 	$(MKXZSFS)
@@ -146,6 +147,7 @@ help:
 	echo '  make [OPTION...] [MACRO=VALUE...] [TARGET...]'
 	echo
 	echo 'MACRO:'
+	echo '  ITEMS     作成するファイル数の上限（最新順）。'
 	echo '  SFS_OPTS  mksquashfsの共通オプション。'
 	echo '  XZ_OPTS   mksquashfs -comp xz時のオプション。'
 	echo '  ZSTD_OPTS mksquashfs -comp zstd時のオプション。'
