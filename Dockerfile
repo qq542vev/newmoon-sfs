@@ -18,7 +18,7 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.0.1
 ##   created - 2026-02-01
-##   modified - 2026-02-14
+##   modified - 2026-08-18
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   conforms-to - <https://docs.docker.com/reference/dockerfile/>
@@ -42,7 +42,7 @@ RUN \
 
 WORKDIR /work
 COPY GNUmakefile .
-COPY rootfs rootfs
+COPY root root
 
 ARG MAKE_OPTS=
 RUN make ${MAKE_OPTS}

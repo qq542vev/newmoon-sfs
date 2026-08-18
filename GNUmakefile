@@ -51,9 +51,9 @@ NEWMOONIA32_URL = https://archive.org/download/debian9newmoonia32-31.4.2.linux-i
 NEWMOON3DNOW_URL = https://archive.org/download/debian8newmoon3dnow-29.1.0.linux-i586-gtk2.tar/
 
 EXTRACT = \
-	dir=$$(mktemp -u) && \
-	trap 'rm -rf -- "$${dir}"' EXIT && \
-	cp -pR -- rootfs "$${dir}" && \
+	dir="$$(mktemp -d)/root" && \
+	trap 'rm -rf -- "$${dir%/*}"' EXIT && \
+	cp -pR -- root "$${dir}" && \
 	tar -C "$${dir}/usr/lib" -xJvf '$(<)'
 
 SFS_OPTS = -all-root -root-mode 0755 -no-xattrs
