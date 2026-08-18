@@ -23,7 +23,7 @@
 # Sp Targets
 # ==========
 
-.PHONY: all clean rebuild update publish unpublish help version
+.PHONY: all list clean rebuild update publish unpublish help version
 
 .SILENT: help version
 
@@ -32,18 +32,23 @@
 # Macro
 # =====
 
+SHELL = sh
 .SHELLFLAGS = -efuo pipefail -c
 
 VERSION = 1.0.6
 
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 DIR = build
+EXT = sfs
 CURL = curl -fLsS --retry 5 --retry-delay 2 --retry-connrefused -o
 MKDIR = mkdir -p --
 RCLONE = rclone
 ITEMS = 2147483647
 
-FILES = DIR='$(@D)/' EXT='$(@F).sfs' ITEMS='$(ITEMS)' jq -r '[ .files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) ] | sort_by((.mtime // "0") | tonumber) | reverse | .[0:(env.ITEMS | tonumber)] | .[] | env.DIR + (.name | sub("tar\\.xz$$"; env.EXT))' '$(<)'
+BUILD_CMD = f=$$(DIR='$(@D)' EXT='$(@F).$(EXT)' ITEMS='$(ITEMS)' $(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
+LIST_CMD = DIR='$(@D)' EXT='xz.$(EXT),zstd.$(EXT)' ITEMS='$(ITEMS)' $(FILES)
+
+FILES = jq -r '[ .files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) ] | sort_by((.mtime // "0") | tonumber) | .[([0, length - (env.ITEMS | tonumber)] | max):] | .[].name as $$name | (env.EXT | split(","))[] as $$ext | env.DIR + "/" + ($$name | sub("tar\\.xz$$"; $$ext))' '$(<)'
 
 NEWMOON_URL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
 NEWMOONSSE_URL = https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
@@ -72,10 +77,10 @@ $(DIR)/%/all: $(DIR)/%/xz $(DIR)/%/zstd
 	:
 
 $(DIR)/%/xz: %.json
-	f=$$($(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
+	$(BUILD_CMD)
 
 $(DIR)/%/zstd: %.json
-	f=$$($(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
+	$(BUILD_CMD)
 
 $(DIR)/%.xz.sfs: $(DIR)/%.tar.xz
 	$(MKXZSFS)
@@ -83,33 +88,53 @@ $(DIR)/%.xz.sfs: $(DIR)/%.tar.xz
 $(DIR)/%.zstd.sfs: $(DIR)/%.tar.xz
 	$(MKZSTDSFS)
 
-newmoon.json:
-	url='$(NEWMOON_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
+# Download
+# ========
+
+# tarball
+# -------
 
 $(DIR)/newmoon/%.tar.xz:
 	$(MKDIR) '$(@D)'
 	$(CURL) '$(@)' '$(NEWMOON_URL)$(@F)'
 
-newmoon-sse.json:
-	url='$(NEWMOONSSE_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
-
 $(DIR)/newmoon-sse/%.tar.xz:
 	$(MKDIR) '$(@D)'
 	$(CURL) '$(@)' '$(NEWMOONSSE_URL)$(@F)'
-
-newmoon-ia32.json:
-	url='$(NEWMOONIA32_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
 
 $(DIR)/newmoon-ia32/%.tar.xz:
 	$(MKDIR) '$(@D)'
 	$(CURL) '$(@)' '$(NEWMOONIA32_URL)$(@F)'
 
-newmoon-3dnow.json:
-	url='$(NEWMOON3DNOW_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
-
 $(DIR)/newmoon-3dnow/%.tar.xz:
 	$(MKDIR) '$(@D)'
 	$(CURL) '$(@)' '$(NEWMOON3DNOW_URL)$(@F)'
+
+# JSON
+# ----
+
+newmoon.json:
+	url='$(NEWMOON_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
+
+newmoon-sse.json:
+	url='$(NEWMOONSSE_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
+
+newmoon-ia32.json:
+	url='$(NEWMOONIA32_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
+
+newmoon-3dnow.json:
+	url='$(NEWMOON3DNOW_URL)' && $(CURL) '$(@)' "$${url%%download*}metadata$${url#*download}"
+
+# List
+# ====
+
+list: $(VARIANTS:%=$(DIR)/%/list)
+
+$(DIR)/%/list: %.json
+	@$(LIST_CMD)
+
+# Clean
+# =====
 
 clean:
 	rm -rf -- $(VARIANTS:%='%.json') '$(DIR)'
@@ -120,6 +145,9 @@ rebuild: clean
 update:
 	rm -f -- $(VARIANTS:%='%.json')
 	$(MAKE) $(VARIANTS:%='%.json')
+
+# Upload
+# ======
 
 publish:
 	for variant in $(VARIANTS); do \
@@ -148,12 +176,14 @@ help:
 	echo
 	echo 'MACRO:'
 	echo '  ITEMS     作成するファイル数の上限（最新順）。'
+	echo '  EXT       作成するファイルの拡張子。'
 	echo '  SFS_OPTS  mksquashfsの共通オプション。'
 	echo '  XZ_OPTS   mksquashfs -comp xz時のオプション。'
 	echo '  ZSTD_OPTS mksquashfs -comp zstd時のオプション。'
 	echo
 	echo 'TARGET:'
 	echo '  all       全てのファイルを作成する。'
+	echo '  list      作成対象のファイル一覧を表示する。'
 	echo '  clean     作成したファイルを削除する。'
 	echo '  rebuild   cleanの実行後にallを実行する。'
 	echo '  update    JSONファイルのみを更新する。'
