@@ -8,7 +8,7 @@ Metadata:
 	author - <qq542vev at https://purl.org/meta/me/>
 	version - 0.1.1
 	created - 2026-02-02
-	modified - 2026-08-19
+	modified - 2026-04-10
 	copyright - Copyright (C) 2026-2026 qq542vev. Some rights reserved.
 	license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 	conforms-to - <https://spec.commonmark.org/current/>
@@ -21,14 +21,14 @@ See Also:
 
 # New Moon SFS
 
-New Moon SFSはFenyőさんが作成したNew Moon([Pale Moon](https://www.palemoon.org/)の派生版)を[Puppy Linux](https://puppylinux-woof-ce.github.io/)用にSFS(SquashFS)ファイルとして再配布するプロジェクトです。2026年2月現在、以下のNew Moonを再配布しています。
+New Moon SFSはFenyőさんが作成したNew Moon([Pale Moon](https://www.palemoon.org/)の変異版)を[Puppy Linux](https://puppylinux-woof-ce.github.io/)用にSFS(SquashFS)ファイルとして再配布するプロジェクトです。2026年02月現在次のNew Moonを再配布しています。
 
- * [New Moon](https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar) (x86, SSE2対応版)
- * [New Moon SSE](https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar) (x86, SSE対応版)
- * [New Moon IA32](https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar) (x86, CMOV対応版)
- * [New Moon 3DNow](https://archive.org/download/debian8newmoon3dnow-29.1.0.linux-i586-gtk2.tar) (x86, 3DNow対応版)
+ * [New Moon](https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar)(x86, SSE2対応版)
+ * [New Moon SSE](https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar)(x86, SSE対応版)
+ * [New Moon IA32](https://archive.org/download/debian9newmoonia32-31.4.2.linux-i686-gtk2.tar)(x86, CMO対応版)
+ * [New Moon 3DNow](https://archive.org/download/debian8newmoon3dnow-29.1.0.linux-i586-gtk2.tar)(x86, 3DNow対応版)
 
-New Moonについてのより詳しい情報は[antiX Forumへの投稿](https://www.antixforum.com/forums/topic/browsers-for-old-cpus/page/10/#post-104401)を参照してください。
+New Moonについてのより詳しい情報は[AntiX Forumへの投稿](https://www.antixforum.com/forums/topic/browsers-for-old-cpus/page/10/#post-104401)を参照してください。
 
 ## ダウンロード
 
@@ -42,4 +42,4 @@ New Moonについてのより詳しい情報は[antiX Forumへの投稿](https:/
 
 ## ライセンス
 
-New Moon SFSに含まれるファイルのライセンスは[LICENSE](LICENSE.txt)の記載に従います。New Moon自体のライセンスはNew Moonのアドレスバーで`about:license`を開くと確認可能です。
+New Moon SFSに含まれるファイルのライセンスは[LICENSE](LICENSE.txt)の記載に従います。New Moon自体のライセンスはNew Moonで<about:license>を開くと確認可能です。
