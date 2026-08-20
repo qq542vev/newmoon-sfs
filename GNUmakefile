@@ -8,9 +8,9 @@
 ##
 ##   id - 0f626fa2-2e49-42b0-8351-f44bd6ab4c34
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.6
+##   version - 1.1.0
 ##   created - 2026-01-22
-##   modified - 2026-08-18
+##   modified - 2026-08-21
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   depends - cp, curl, find, jq, mkdir, mksquashfs, rclone, rm, tar
@@ -35,7 +35,7 @@
 SHELL = sh
 .SHELLFLAGS = -efuo pipefail -c
 
-VERSION = 1.0.6
+VERSION = 1.1.0
 
 VARIANTS = newmoon newmoon-sse newmoon-ia32 newmoon-3dnow
 DIR = build
@@ -44,11 +44,13 @@ CURL = curl -fLsS --retry 5 --retry-delay 2 --retry-connrefused -o
 MKDIR = mkdir -p --
 RCLONE = rclone
 LIMIT = 2147483647
+MIN_AGE = 0
+MAX_AGE = 2147483647
 
-BUILD_CMD = f=$$(DIR='$(@D)' EXT='$(@F).$(EXT)' LIMIT='$(LIMIT)' $(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
-LIST_CMD = DIR='$(@D)' EXT='xz.$(EXT),zstd.$(EXT)' LIMIT='$(LIMIT)' $(FILES)
+BUILD_CMD = f=$$(DIR='$(@D)' EXT='$(@F).$(EXT)' LIMIT='$(LIMIT)' MIN_AGE='$(MIN_AGE)' MAX_AGE='$(MAX_AGE)' $(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
+LIST_CMD = DIR='$(@D)' EXT='xz.$(EXT),zstd.$(EXT)' LIMIT='$(LIMIT)' MIN_AGE='$(MIN_AGE)' MAX_AGE='$(MAX_AGE)' $(FILES)
 
-FILES = jq -r '[ .files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) ] | sort_by((.mtime // "0") | tonumber) | .[([0, length - (env.LIMIT | tonumber)] | max):] | .[].name as $$name | (env.EXT | split(","))[] as $$ext | env.DIR + "/" + ($$name | sub("tar\\.xz$$"; $$ext))' '$(<)'
+FILES = jq -r '[ .files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) | select((now - ((.mtime // "0") | tonumber)) >= (env.MIN_AGE | tonumber) and (now - ((.mtime // "0") | tonumber)) <= (env.MAX_AGE | tonumber)) ] | sort_by((.mtime // "0") | tonumber) | .[([0, length - (env.LIMIT | tonumber)] | max):] | .[].name as $$name | (env.EXT | split(","))[] as $$ext | env.DIR + "/" + ($$name | sub("tar\\.xz$$"; $$ext))' '$(<)'
 
 NEWMOON_URL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
 NEWMOONSSE_URL = https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
@@ -178,6 +180,8 @@ help:
 	echo
 	echo 'MACRO:'
 	echo '  LIMIT     作成するファイル数の上限（最新順）。'
+	echo '  MIN_AGE   対象にするファイルの最小経過秒数（これより新しいファイルを除外）。'
+	echo '  MAX_AGE   対象にするファイルの最大経過秒数（これより古いファイルを除外）。'
 	echo '  EXT       作成するファイルの拡張子。'
 	echo '  SFS_OPTS  mksquashfsの共通オプション。'
 	echo '  XZ_OPTS   mksquashfs -comp xz時のオプション。'
