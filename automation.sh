@@ -8,9 +8,9 @@
 ##
 ##   id - 260ff918-6dc8-4fd1-8be9-4fd466c0fc5f
 ##   author - <qq542vev at https://purl.org/meta/me/>
-##   version - 1.0.1
+##   version - 1.0.2
 ##   created - 2026-02-14
-##   modified - 2026-08-18
+##   modified - 2026-08-21
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##
@@ -50,7 +50,7 @@ git checkout origin/master -- GNUmakefile root
 # =======================
 
 # SFSイメージの生成と外部ストレージへのアップロードを実行
-make all publish
+make MIN_AGE=86400 all publish
 
 # 4. 処理済みマーカーの作成とコミット・プッシュ
 # =============================================
