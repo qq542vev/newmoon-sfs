@@ -23,7 +23,7 @@
 # Sp Targets
 # ==========
 
-.PHONY: all list clean rebuild update publish unpublish help version
+.PHONY: FORCE all list clean rebuild update publish unpublish help version
 
 .SILENT: help version
 
@@ -43,12 +43,12 @@ EXT = sfs
 CURL = curl -fLsS --retry 5 --retry-delay 2 --retry-connrefused -o
 MKDIR = mkdir -p --
 RCLONE = rclone
-ITEMS = 2147483647
+LIMIT = 2147483647
 
-BUILD_CMD = f=$$(DIR='$(@D)' EXT='$(@F).$(EXT)' ITEMS='$(ITEMS)' $(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
-LIST_CMD = DIR='$(@D)' EXT='xz.$(EXT),zstd.$(EXT)' ITEMS='$(ITEMS)' $(FILES)
+BUILD_CMD = f=$$(DIR='$(@D)' EXT='$(@F).$(EXT)' LIMIT='$(LIMIT)' $(FILES)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
+LIST_CMD = DIR='$(@D)' EXT='xz.$(EXT),zstd.$(EXT)' LIMIT='$(LIMIT)' $(FILES)
 
-FILES = jq -r '[ .files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) ] | sort_by((.mtime // "0") | tonumber) | .[([0, length - (env.ITEMS | tonumber)] | max):] | .[].name as $$name | (env.EXT | split(","))[] as $$ext | env.DIR + "/" + ($$name | sub("tar\\.xz$$"; $$ext))' '$(<)'
+FILES = jq -r '[ .files[] | select(.name | test("newmoon.*\\.tar\\.xz$$") and (contains("\u0027") | not)) ] | sort_by((.mtime // "0") | tonumber) | .[([0, length - (env.LIMIT | tonumber)] | max):] | .[].name as $$name | (env.EXT | split(","))[] as $$ext | env.DIR + "/" + ($$name | sub("tar\\.xz$$"; $$ext))' '$(<)'
 
 NEWMOON_URL = https://archive.org/download/centos7newmoon-32.0.0.linux-i686-gtk2.tar/
 NEWMOONSSE_URL = https://archive.org/download/debian9newmoonsse-31.4.2.linux-i686-gtk2.tar/
@@ -73,13 +73,13 @@ MKZSTDSFS = $(EXTRACT) && $(MKSFS) "$${dir}" '$(@)' -comp zstd $(ZSTD_OPTS)
 
 all: $(VARIANTS:%=$(DIR)/%/all)
 
-$(DIR)/%/all: $(DIR)/%/xz $(DIR)/%/zstd
+$(DIR)/%/all: $(DIR)/%/xz $(DIR)/%/zstd FORCE
 	:
 
-$(DIR)/%/xz: %.json
+$(DIR)/%/xz: %.json FORCE
 	$(BUILD_CMD)
 
-$(DIR)/%/zstd: %.json
+$(DIR)/%/zstd: %.json FORCE
 	$(BUILD_CMD)
 
 $(DIR)/%.xz.sfs: $(DIR)/%.tar.xz
@@ -87,6 +87,8 @@ $(DIR)/%.xz.sfs: $(DIR)/%.tar.xz
 
 $(DIR)/%.zstd.sfs: $(DIR)/%.tar.xz
 	$(MKZSTDSFS)
+
+FORCE:
 
 # Download
 # ========
@@ -130,7 +132,7 @@ newmoon-3dnow.json:
 
 list: $(VARIANTS:%=$(DIR)/%/list)
 
-$(DIR)/%/list: %.json
+$(DIR)/%/list: %.json FORCE
 	@$(LIST_CMD)
 
 # Clean
@@ -175,7 +177,7 @@ help:
 	echo '  make [OPTION...] [MACRO=VALUE...] [TARGET...]'
 	echo
 	echo 'MACRO:'
-	echo '  ITEMS     作成するファイル数の上限（最新順）。'
+	echo '  LIMIT     作成するファイル数の上限（最新順）。'
 	echo '  EXT       作成するファイルの拡張子。'
 	echo '  SFS_OPTS  mksquashfsの共通オプション。'
 	echo '  XZ_OPTS   mksquashfs -comp xz時のオプション。'
