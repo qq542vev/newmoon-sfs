@@ -10,7 +10,7 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.1.0
 ##   created - 2026-01-22
-##   modified - 2026-10-13
+##   modified - 2026-10-14
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
 ##   depends - cp, curl, find, jq, mkdir, mksquashfs, mktemp, rclone, rm, tar
@@ -81,10 +81,10 @@ $(DIR)/%/all: %.json FORCE
 	f=$$($(LIST_CMD)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
 
 $(DIR)/%/xz: %.json FORCE
-	$(BUILD_CMD)
+	+$(BUILD_CMD)
 
 $(DIR)/%/zstd: %.json FORCE
-	$(BUILD_CMD)
+	+$(BUILD_CMD)
 
 $(DIR)/%.xz.$(EXT): $(DIR)/%.tar.xz $(BASE_DEPS)
 	$(MKXZSFS)

@@ -14,7 +14,7 @@
 ##   IMG_AUTHS - org.opencontainers.image.authorsの値。
 ##   IMG_CREATED - org.opencontainers.image.createdの値。
 ##   IMG_DESC - org.opencontainers.image.descriptionの値。
-##   IMG_LICENSE - org.opencontainers.image.licenseの値。
+##   IMG_LICENSE - org.opencontainers.image.licensesの値。
 ##   IMG_TITLE - org.opencontainers.image.titleの値。
 ##   IMG_URL - org.opencontainers.image.urlの値。
 ##   IMG_VER - org.opencontainers.image.versionの値。
@@ -49,7 +49,7 @@ variable "labels" {
     "org.opencontainers.image.authors" = IMG_AUTHS
     "org.opencontainers.image.url" = IMG_URL
     "org.opencontainers.image.version" = IMG_VER
-    "org.opencontainers.image.license" = IMG_LICENSE
+    "org.opencontainers.image.licenses" = IMG_LICENSE
     "org.opencontainers.image.title" = IMG_TITLE
     "org.opencontainers.image.description" = IMG_DESC
   }
