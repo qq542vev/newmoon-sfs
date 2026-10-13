@@ -181,7 +181,7 @@ help:
 	echo '  make [OPTION...] [MACRO=VALUE...] [TARGET...]'
 	echo
 	echo 'MACRO:'
-	echo '  LIMIT     各バリアントで対象にするアーカイブ数の上限（更新日時が新しいものを優先）。'
+	echo '  LIMIT     各バリアントで対象にするアーカイブ数の上限（新しいものを優先）。'
 	echo '  MIN_AGE   対象にするファイルの最小経過秒数（これより新しいファイルを除外）。'
 	echo '  MAX_AGE   対象にするファイルの最大経過秒数（これより古いファイルを除外）。'
 	echo '  EXT       作成するファイルの拡張子。'
