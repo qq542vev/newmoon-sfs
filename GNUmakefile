@@ -86,10 +86,10 @@ $(DIR)/%/xz: %.json FORCE
 $(DIR)/%/zstd: %.json FORCE
 	$(BUILD_CMD)
 
-$(DIR)/%.xz.sfs: $(DIR)/%.tar.xz $(BASE_DEPS)
+$(DIR)/%.xz.$(EXT): $(DIR)/%.tar.xz $(BASE_DEPS)
 	$(MKXZSFS)
 
-$(DIR)/%.zstd.sfs: $(DIR)/%.tar.xz $(BASE_DEPS)
+$(DIR)/%.zstd.$(EXT): $(DIR)/%.tar.xz $(BASE_DEPS)
 	$(MKZSTDSFS)
 
 FORCE:
@@ -158,7 +158,7 @@ update:
 publish:
 	for variant in $(VARIANTS); do \
 		if [ -d "$(DIR)/$${variant}" ]; then \
-				find "$(DIR)/$${variant}" -name '*.sfs' -type f ! -size 0 -print -exec $(SHELL) $(.SHELLFLAGS) 'for f in "$${@}"; do $(RCLONE) copy "$${f}" "newmoon-sfs:"; done' sh '{}' '+'; \
+				find "$(DIR)/$${variant}" -name '*.$(EXT)' -type f ! -size 0 -print -exec $(SHELL) $(.SHELLFLAGS) 'for f in "$${@}"; do $(RCLONE) copy "$${f}" "newmoon-sfs:"; done' sh '{}' '+'; \
 		fi; \
 	done
 
