@@ -63,7 +63,9 @@ EXTRACT = \
 	cp -pR -- root "$${dir}" && \
 	tar -C "$${dir}/usr/lib" -xJvf '$(<)'
 
-SFS_OPTS = -all-root -root-mode 0755 -no-xattrs
+BASE_DEPS != find GNUmakefile root -type f -o -type d
+
+SFS_OPTS = -noappend -all-root -root-mode 0755 -no-xattrs
 XZ_OPTS = $(SFS_OPTS) -b 1M -Xbcj x86 -Xdict-size 100%
 ZSTD_OPTS = $(SFS_OPTS) -b 128K -Xcompression-level 19
 MKSFS = mksquashfs
@@ -75,8 +77,8 @@ MKZSTDSFS = $(EXTRACT) && $(MKSFS) "$${dir}" '$(@)' -comp zstd $(ZSTD_OPTS)
 
 all: $(VARIANTS:%=$(DIR)/%/all)
 
-$(DIR)/%/all: $(DIR)/%/xz $(DIR)/%/zstd FORCE
-	:
+$(DIR)/%/all: %.json FORCE
+	f=$$($(LIST_CMD)) && case "$${f}" in ?*) $(MAKE) $${f};; esac
 
 $(DIR)/%/xz: %.json FORCE
 	$(BUILD_CMD)
@@ -84,10 +86,10 @@ $(DIR)/%/xz: %.json FORCE
 $(DIR)/%/zstd: %.json FORCE
 	$(BUILD_CMD)
 
-$(DIR)/%.xz.sfs: $(DIR)/%.tar.xz
+$(DIR)/%.xz.sfs: $(DIR)/%.tar.xz $(BASE_DEPS)
 	$(MKXZSFS)
 
-$(DIR)/%.zstd.sfs: $(DIR)/%.tar.xz
+$(DIR)/%.zstd.sfs: $(DIR)/%.tar.xz $(BASE_DEPS)
 	$(MKZSTDSFS)
 
 FORCE:
