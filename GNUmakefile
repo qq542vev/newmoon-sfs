@@ -10,10 +10,10 @@
 ##   author - <qq542vev at https://purl.org/meta/me/>
 ##   version - 1.1.0
 ##   created - 2026-01-22
-##   modified - 2026-08-21
+##   modified - 2026-10-13
 ##   copyright - Copyright (C) 2026-2026 qq542vev. All rights reserved.
 ##   license - <GPL-3.0-only at https://www.gnu.org/licenses/gpl-3.0.txt>
-##   depends - cp, curl, find, jq, mkdir, mksquashfs, rclone, rm, tar
+##   depends - cp, curl, find, jq, mkdir, mksquashfs, mktemp, rclone, rm, tar
 ##
 ## See Also:
 ##
@@ -181,7 +181,7 @@ help:
 	echo '  make [OPTION...] [MACRO=VALUE...] [TARGET...]'
 	echo
 	echo 'MACRO:'
-	echo '  LIMIT     作成するファイル数の上限（最新順）。'
+	echo '  LIMIT     各バリアントで対象にするアーカイブ数の上限（更新日時が新しいものを優先）。'
 	echo '  MIN_AGE   対象にするファイルの最小経過秒数（これより新しいファイルを除外）。'
 	echo '  MAX_AGE   対象にするファイルの最大経過秒数（これより古いファイルを除外）。'
 	echo '  EXT       作成するファイルの拡張子。'
